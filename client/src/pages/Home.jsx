@@ -3,6 +3,8 @@ import Sidebar from "@/components/Sidebar";
 import Table from "@/components/Table";
 
 const Home = () => {
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  console.log(BASE_URL);
   return (
     <div className="lg:w-screen h-screen flex overflow-x-hidden bg-slate-200">
       <Sidebar />
