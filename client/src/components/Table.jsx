@@ -2,20 +2,27 @@ import { ChevronsUpDown } from "lucide-react";
 import DeleteDialog from "./DeleteDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCustomersThunk } from "@/redux/slice/customers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { lineSpinner } from "ldrs";
 import EditDialog from "./EditDialog";
+import { useEffectAfterMount } from "@/hooks/useEffectAfterMount";
 
 const Table = () => {
   lineSpinner.register();
   const dispatch = useDispatch();
-  const { customersList, isLoading } = useSelector((state) => state.customer);
+  const { customersList, isLoading } = useSelector(
+    (state) => state.customer
+  );
 
   const [sortingField, setSortingField] = useState("username");
 
-  useEffect(() => {
+  const handleDispatch = () => {
     dispatch(fetchCustomersThunk(sortingField));
-  }, [sortingField, dispatch]);
+  };
+
+  useEffectAfterMount(() => {
+    handleDispatch();
+  }, [sortingField]);
 
   return (
     <>
@@ -28,8 +35,8 @@ const Table = () => {
             color="black"
           ></l-line-spinner>
         </div>
-      ) : (
-        <div className="overflow-x-scroll lg:overflow-hidden">
+      ) : customersList && customersList.length > 0 ? (
+        <div className={`overflow-x-scroll xl:overflow-hidden`}>
           <table className="space-y-10 min-w-full font-sans table-auto mr-10">
             <thead>
               <tr className="py-2 rounded-md px-2 w-full bg-[#c5e3d5] text-[#015249]  flex items-center gap-5">
@@ -62,32 +69,36 @@ const Table = () => {
               {customersList &&
                 customersList.map((customer) => (
                   <tr
-                    key={customer._id}
+                    key={customer && customer._id}
                     className="bg-white rounded-md mt-5 px-2 py-1 grid grid-flow-col gap-5 justify-items-start items-center w-full"
                   >
                     <td className="w-[140px]">
                       <img
-                        src={customer.profilePicture}
+                        src={customer && customer.profilePicture}
                         alt="user image"
                         width={100}
                         height={100}
-                        className="object-contain rounded-xl min-w-[120px]"
+                        className="object-contain max-h-[140px] rounded-xl min-w-[120px]"
                       />
                     </td>
-                    <td className="w-[140px] ">{customer.username}</td>
-                    <td className="text-[#57bc90] underline w-[140px]">
-                      {customer.fullName}
+                    <td className="w-[140px] ">
+                      {customer && customer.username}
                     </td>
-                    <td className="w-[250px] ">{customer.email}</td>
+                    <td className="text-[#57bc90] underline w-[140px]">
+                      {customer && customer.fullName}
+                    </td>
+                    <td className="w-[250px] ">{customer && customer.email}</td>
                     <td className="space-x-5 min-w-max ">
-                      <EditDialog customer={customer} />
-                      <DeleteDialog customerID={customer._id} />
+                      <EditDialog customer={customer && customer} />
+                      <DeleteDialog customerID={customer && customer._id} />
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
+      ) : (
+        "NO DATA AVAILABLE!"
       )}
     </>
   );

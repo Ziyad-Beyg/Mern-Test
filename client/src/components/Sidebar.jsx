@@ -22,8 +22,8 @@ const Sidebar = () => {
         height={40}
       />
 
-      <div className="w-[98%] lg:w-[60%]">
-        <Button className="hidden  lg:flex w-full bg-[#043933] outline-none hover:cursor-default hover:bg-[#043933] text-base py-2 px-4">
+      <div className="w-[98%] lg:w-[70%]">
+        <Button className="hidden lg:flex w-full bg-[#043933] outline-none hover:cursor-default hover:bg-[#043933] text-base py-2 px-4">
           <Users className="w-5 h-5 mr-4 shrink-0" />
           CUSTOMERS
         </Button>

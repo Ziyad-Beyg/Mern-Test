@@ -1,11 +1,11 @@
 {
-  "name": "chaibackend",
+  "name": "mern-test",
   "version": "1.0.0",
-  "description": "Chai Aur Backend Practice",
+  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules --inspect=5858 src/index.js"
   },
   "keywords": [
     "javascript",
@@ -19,6 +19,7 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
     "cloudinary": "^2.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

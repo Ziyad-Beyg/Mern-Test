@@ -15,7 +15,14 @@ export const createCustomerThunk = createAsyncThunk(
       const { data } = await createCustomer(formData);
       return data.data;
     } catch (error) {
-      console.log("Error: ", error);
+      if (error.response.status == 409) {
+        toast.error("Customer with email or username already exist!");
+      } else if (error.response.status == 400) {
+        toast.error("Profile Picture Image is required!");
+      } else {
+        toast.error("Something went wrong while registering customer!");
+      }
+      throw error;
     }
   }
 );
@@ -28,7 +35,9 @@ export const fetchCustomersThunk = createAsyncThunk(
       let { data } = await fetchCustomer(filter);
       return data.data;
     } catch (error) {
-      console.log("Error: ", error);
+      toast.error("No Customer Found!");
+      console.log(error);
+      throw error;
     }
   }
 );
@@ -41,7 +50,9 @@ export const deleteCustomerThunk = createAsyncThunk(
       const { data } = await deleteCustomer(id);
       return data.data;
     } catch (error) {
-      console.log("Error: ", error);
+      toast.error("Something went wrong while deleting!");
+      console.log(error);
+      throw error;
     }
   }
 );
@@ -49,12 +60,21 @@ export const deleteCustomerThunk = createAsyncThunk(
 // update customer async action
 export const updateCustomerThunk = createAsyncThunk(
   "updateCustomer",
-  async (id, formData) => {
+  async (customerData) => {
     try {
-      const { data } = await updateCustomer(id, formData);
+      const { data } = await updateCustomer(
+        customerData?._id,
+        customerData?.formData
+      );
       return data.data;
     } catch (error) {
-      console.log("Error: ", error);
+      if (error.response.status == 404) {
+        toast.error("User does not exist or is deleted!");
+      } else {
+        toast.error("Something went wrong while updating!");
+      }
+      console.log(error);
+      throw error;
     }
   }
 );
@@ -75,10 +95,11 @@ const customerSlice = createSlice({
       .addCase(createCustomerThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.customersList.push(action.payload);
+        toast.success("Customer Created!");
       })
       .addCase(createCustomerThunk.rejected, (state, action) => {
         state.isLoading = false;
-        console.log("Error: ", action.error.message);
+        console.log("Error: ", action);
         state.isError = action.error.message;
       })
       // Get all customer
@@ -86,8 +107,9 @@ const customerSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(fetchCustomersThunk.fulfilled, (state, action) => {
-        state.customersList = action.payload;
         state.isLoading = false;
+        state.customersList = action.payload;
+        toast.success("Customer Fetched!");
       })
       .addCase(fetchCustomersThunk.rejected, (state, action) => {
         console.log("Error: ", action.error.message);
@@ -99,12 +121,15 @@ const customerSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(deleteCustomerThunk.fulfilled, (state, action) => {
-        const { id } = action.payload;
-        let allCustomers = state.customersList.slice(0);
-        if (id) {
-          state.customersList = allCustomers.filter((user) => user._id !== id);
+        const { _id } = action.payload;
+
+        if (_id) {
+          state.customersList = state.customersList.filter(
+            (user) => user._id !== _id
+          );
         }
         state.isLoading = false;
+        toast.success("Customer Deleted!");
       })
       .addCase(deleteCustomerThunk.rejected, (state, action) => {
         state.isLoading = false;
@@ -120,6 +145,7 @@ const customerSlice = createSlice({
         state.customersList = state.customersList.map((customer) =>
           customer._id === action.payload._id ? action.payload : customer
         );
+        toast.success("Customer Updated!");
       })
       .addCase(updateCustomerThunk.rejected, (state, action) => {
         state.isLoading = false;

@@ -9,33 +9,25 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Label } from "./ui/label";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateCustomerThunk } from "@/redux/slice/customers";
 
 const EditDialog = ({ customer }) => {
-  //   const allCustomer = useSelector((state) => state.customer.customersList);
-
-  //   let editableCustomer = allCustomer.find(
-  //     (customer) => customer._id === customerID
-  //   );
-
-  console.log(customer);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: customer.email,
-      username: customer.username,
-      fullName: customer.fullName,
+      email: customer?.email,
+      username: customer?.username,
+      fullName: customer?.fullName,
     },
   });
   const [selectedFilename, setSelectedFilename] = useState(
-    customer.pictureName
+    customer?.pictureName
   );
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useState();
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   //   const state = useSelector((state) => state.customersList);
@@ -57,23 +49,19 @@ const EditDialog = ({ customer }) => {
   };
 
   const onSubmit = (data) => {
-    // if (file.length <= 0) {
-    //   setFileError("Profile picture can not be empty");
-    //   return false;
-    // }
-
-    console.log(customer);
-
     const formData = new FormData();
-    if (file.length >= 0) {
+    if (file) {
       formData.append("profilePicture", file);
     }
     formData.append("username", data.username.toLowerCase());
     formData.append("email", data.email);
     formData.append("fullName", data.fullName.trim());
 
-    dispatch(updateCustomerThunk(customer._id, formData));
-
+    const customerData = {
+      _id: customer?._id,
+      formData,
+    };
+    dispatch(updateCustomerThunk(customerData));
     setOpen(false);
   };
 

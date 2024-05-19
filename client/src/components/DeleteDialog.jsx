@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Loader2, Trash2, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,10 +12,9 @@ import { useState } from "react";
 const DeleteDialog = ({ customerID }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const { isLoading, customersList } = useSelector((state) => state.customer);
+  const { isLoading } = useSelector((state) => state.customer);
 
   const handleDeleteClick = async () => {
-    console.log(isLoading)
     dispatch(deleteCustomerThunk(customerID));
   };
 

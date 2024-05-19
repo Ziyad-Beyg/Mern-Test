@@ -6,15 +6,12 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
       lowercase: true,
-      unique: true,
       trim: true,
-      index: true,
     },
     email: {
       type: String,
       required: true,
       lowercase: true,
-      unique: true,
       trim: true,
     },
     fullName: {
@@ -22,7 +19,7 @@ const customerSchema = new mongoose.Schema(
       required: true,
     },
     profilePicture: {
-      type: String, // Cloudnary URL
+      type: String, 
       required: true,
     },
     pictureName: {

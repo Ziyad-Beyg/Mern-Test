@@ -27,7 +27,7 @@ const AddDialog = () => {
   const [fileError, setFileError] = useState("");
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const { isLoading, isError } = useSelector((state) => state.customer);
+  const { isLoading } = useSelector((state) => state.customer);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -58,16 +58,14 @@ const AddDialog = () => {
       formData.append("email", data.email);
       formData.append("fullName", data.fullName.trim());
 
-      dispatch(createCustomerThunk(formData));
+      dispatch(createCustomerThunk(formData)).then(() => {
+        setOpen(false);
+      });
 
       reset();
       setFile([]);
       setSelectedFilename("");
-
-      if (isLoading) {
-        setOpen(false);
-        toast.success("Customer Created!");
-      }
+      setOpen(false);
     } catch (error) {
       console.log("Error", error.message);
       toast.error(error.message);
