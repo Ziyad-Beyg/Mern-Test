@@ -23,6 +23,7 @@ const addCustomer = AsyncHandler(async (req, res) => {
 
     let profilePictureLocalFilePath;
 
+
     if (
       req.files &&
       Array.isArray(req.files.profilePicture) &&
@@ -30,7 +31,7 @@ const addCustomer = AsyncHandler(async (req, res) => {
     ) {
       profilePictureLocalFilePath = req.files?.profilePicture[0]?.path;
     } else {
-      throw new ApiError(400, "Profile Picture Image is required!");
+      throw new ApiError(400, "Profile Picture is required!");
     }
 
     const profilePicture = await uploadOnCloudinary(
@@ -38,7 +39,7 @@ const addCustomer = AsyncHandler(async (req, res) => {
     );
 
     if (!profilePicture) {
-      throw new ApiError(400, "Profile Picture Image is required!");
+      throw new ApiError(400, "Profile Picture is required!");
     }
 
     let customer = await Customer.create({
